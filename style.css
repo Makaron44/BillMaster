@@ -1,0 +1,491 @@
+:root {
+    --bg-color: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --accent-color: #38bdf8;
+    --success-color: #4ade80;
+    --warning-color: #fbbf24;
+    --danger-color: #f87171;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --primary-gradient: linear-gradient(135deg, #38bdf8, #818cf8);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    background-image:
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+#app {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    padding-bottom: 6rem;
+    /* Space for nav */
+}
+
+/* Glassmorphism Classes */
+.glass {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.5rem;
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.text-gradient {
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Bill Rows */
+.bill-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bill-row:active {
+    transform: scale(0.98);
+}
+
+.bill-row.paid {
+    border-left: 4px solid var(--success-color);
+    background: rgba(74, 222, 128, 0.05);
+}
+
+.bill-row.pending {
+    border-left: 4px solid var(--warning-color);
+}
+
+.bill-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.bill-meta {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.bill-value {
+    text-align: right;
+}
+
+.bill-value .amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.status-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+.paid .status-tag {
+    color: var(--success-color);
+}
+
+.pending .status-tag {
+    color: var(--warning-color);
+}
+
+/* Template Management */
+.template-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.9rem;
+}
+
+.btn-del {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.btn-del:hover {
+    opacity: 1;
+}
+
+/* Calendar */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.calendar-header button {
+    background: none;
+    border: 1px solid var(--glass-border);
+    color: white;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.calendar-card {
+    padding: 1rem;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.calendar-day:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.calendar-day.other-month {
+    color: #334155;
+    opacity: 0.5;
+}
+
+.calendar-day.has-bills-pending .dot {
+    position: absolute;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--warning-color);
+    box-shadow: 0 0 8px var(--warning-color);
+}
+
+.calendar-day.has-bills-paid .dot {
+    position: absolute;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--success-color);
+}
+
+.calendar-day.today {
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* Day details */
+.day-details-container {
+    min-height: 100px;
+}
+
+/* Yearly Stats */
+.yearly-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.yearly-row span {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.yearly-row strong {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+#tpl-custom-category-group {
+    margin-top: 0.5rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Reminder Banner */
+.reminder-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(248, 113, 113, 0.1);
+}
+
+.reminder-icon {
+    font-size: 1.5rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Header */
+header {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+}
+
+header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Widgets / Cards */
+.card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Stats Row */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-box {
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.stat-box:active {
+    transform: scale(0.97);
+}
+
+.stat-box i {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Card Variants */
+.paid-card {
+    border-bottom: 3px solid var(--success-color);
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.1) 0%, rgba(30, 41, 59, 0.7) 100%);
+    box-shadow: 0 10px 30px rgba(74, 222, 128, 0.1);
+}
+
+.paid-card .stat-value {
+    color: var(--success-color);
+}
+
+.pending-card {
+    border-bottom: 3px solid var(--warning-color);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(30, 41, 59, 0.7) 100%);
+    box-shadow: 0 10px 30px rgba(251, 191, 36, 0.1);
+}
+
+.pending-card .stat-value {
+    color: var(--warning-color);
+}
+
+.stat-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.stat-progress-bar {
+    height: 100%;
+    transition: width 0.5s ease-out;
+}
+
+/* Navigation Bar */
+.bottom-nav {
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+}
+
+.nav-item {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.7rem;
+    gap: 4px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.nav-item.active {
+    color: var(--accent-color);
+}
+
+.nav-icon {
+    font-size: 1.4rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    font-family: inherit;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    background: #1e293b;
+    /* Solid background */
+    border: 1px solid var(--glass-border);
+    border-radius: 0.8rem;
+    padding: 0.8rem;
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+}
+
+.form-group select option {
+    background-color: #1e293b;
+    color: white;
+}
