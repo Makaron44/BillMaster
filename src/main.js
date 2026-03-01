@@ -450,7 +450,9 @@ function renderSettings() {
           <label>Cykl płatności</label>
           <select id="tpl-cycle">
             <option value="monthly">Miesięczny</option>
+            <option value="bimonthly">Co dwa miesiące</option>
             <option value="quarterly">Kwartalny</option>
+            <option value="halfyear">Co pół roku</option>
             <option value="yearly">Roczny</option>
           </select>
         </div>
@@ -468,7 +470,12 @@ function renderSettings() {
       <div id="templates-list" style="margin-top: 1rem;">
         ${state.templates.map(tpl => `
           <div class="template-row">
-            <span>${getCategoryIcon(tpl.category)} ${tpl.name} (${tpl.defaultAmount} zł) - ${tpl.cycle === 'monthly' ? 'Msc' : (tpl.cycle === 'quarterly' ? 'Kwart' : 'Rok')}</span>
+            <span>${getCategoryIcon(tpl.category)} ${tpl.name} (${tpl.defaultAmount} zł) - ${tpl.cycle === 'monthly' ? 'Msc' :
+      tpl.cycle === 'bimonthly' ? '2-Msc' :
+        tpl.cycle === 'quarterly' ? 'Kwart' :
+          tpl.cycle === 'halfyear' ? 'Pół-R' :
+            'Rok'
+    }</span>
             <button class="btn-del" onclick="window.delTemplate(${tpl.id})">✕</button>
           </div>
         `).join('')}
@@ -486,7 +493,9 @@ function isTemplateActive(tpl, monthISO) {
 
   const diffMonths = (targetY - startY) * 12 + (targetM - startM);
 
+  if (tpl.cycle === 'bimonthly') return diffMonths % 2 === 0 && diffMonths >= 0;
   if (tpl.cycle === 'quarterly') return diffMonths % 3 === 0 && diffMonths >= 0;
+  if (tpl.cycle === 'halfyear') return diffMonths % 6 === 0 && diffMonths >= 0;
   if (tpl.cycle === 'yearly') return diffMonths % 12 === 0 && diffMonths >= 0;
 
   return false;
