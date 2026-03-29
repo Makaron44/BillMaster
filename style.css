@@ -515,6 +515,35 @@ header p {
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Rule Pills */
+.rule-pills {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+    padding: 2px;
+}
+
+.pill {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 1.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pill.active {
+    background: var(--accent-color);
+    color: var(--bg-color);
+}
+
+.living-box {
+    background: rgba(56, 189, 248, 0.05) !important;
+}
+
 .form-group select option {
     background-color: #1e293b;
     color: white;
