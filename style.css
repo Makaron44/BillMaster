@@ -485,6 +485,36 @@ header p {
     outline: none;
 }
 
+/* Budget Calculator */
+.budget-item {
+    margin-bottom: 1rem;
+}
+
+.budget-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.budget-head strong {
+    color: var(--text-primary);
+}
+
+.stat-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.stat-progress-bar {
+    height: 100%;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .form-group select option {
     background-color: #1e293b;
     color: white;

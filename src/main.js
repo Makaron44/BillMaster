@@ -20,7 +20,8 @@ let state = {
   currentMonth: new Date().toISOString().slice(0, 7), // YYYY-MM
   templates: [],
   payments: [],
-  allPayments: []
+  allPayments: [],
+  monthlyIncome: 0
 };
 
 let statsChart = null;
@@ -34,6 +35,9 @@ async function refreshData() {
   state.templates = await db.templates.toArray();
   state.payments = await db.payments.where('month').equals(state.currentMonth).toArray();
   state.allPayments = await db.payments.toArray();
+  
+  const incomeSetting = await db.settings.get('monthlyIncome');
+  state.monthlyIncome = incomeSetting ? incomeSetting.value : 0;
 }
 
 function renderApp() {
@@ -99,7 +103,58 @@ function renderStats() {
   const diff = currentTotal - prevTotal;
   const diffPercent = prevTotal > 0 ? (diff / prevTotal * 100).toFixed(1) : 0;
 
+  // 60/30/10 Logic
+  const needsLimit = state.monthlyIncome * 0.6;
+  const wantsLimit = state.monthlyIncome * 0.3;
+  const savingsLimit = state.monthlyIncome * 0.1;
+
+  // Actual fixed expenses (bills for this month)
+  const activeTemplates = state.templates.filter(tpl => isTemplateActive(tpl, state.currentMonth));
+  const fixedExpenses = activeTemplates.reduce((sum, tpl) => {
+    const p = state.payments.find(pmt => pmt.templateId === tpl.id);
+    return sum + (p ? p.amount : tpl.defaultAmount);
+  }, 0);
+
+  const needsUsage = needsLimit > 0 ? (fixedExpenses / needsLimit * 100) : 0;
+
   return `
+    <div class="glass card">
+      <h3>Kalkulator Budżetowy 60/30/10</h3>
+      <div class="form-group" style="margin-top: 1rem;">
+        <label>Twój miesięczny dochód netto (zł)</label>
+        <input type="number" value="${state.monthlyIncome || ''}" placeholder="0.00" onchange="window.updateIncome(this.value)">
+      </div>
+      
+      <div class="budget-grid" style="margin-top: 1.5rem;">
+        <div class="budget-item">
+          <div class="budget-head">
+            <span>🏠 Potrzeby (60%)</span>
+            <strong>${needsLimit.toFixed(2)} zł</strong>
+          </div>
+          <div class="stat-progress">
+            <div class="stat-progress-bar" style="width: ${Math.min(needsUsage, 100)}%; background: ${needsUsage > 100 ? 'var(--danger-color)' : 'var(--accent-color)'};"></div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.4rem;">
+            Rachunki: ${fixedExpenses.toFixed(2)} zł (${needsUsage.toFixed(1)}% limitu potrzeb)
+          </p>
+        </div>
+
+        <div class="budget-item" style="margin-top: 1rem;">
+          <div class="budget-head">
+            <span>🎉 Zachcianki (30%)</span>
+            <strong>${wantsLimit.toFixed(2)} zł</strong>
+          </div>
+        </div>
+
+        <div class="budget-item" style="margin-top: 1rem;">
+          <div class="budget-head">
+            <span>💰 Oszczędności (10%)</span>
+            <strong>${savingsLimit.toFixed(2)} zł</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="glass card">
       <h3>Wydatki w tym miesiącu</h3>
       <div style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0;">${currentTotal.toFixed(2)} zł</div>
@@ -535,6 +590,13 @@ window.addTemplate = async () => {
     await refreshData();
     renderApp();
   }
+};
+
+window.updateIncome = async (val) => {
+  const income = parseFloat(val) || 0;
+  await db.settings.put({ key: 'monthlyIncome', value: income });
+  state.monthlyIncome = income;
+  renderApp(); // Smoothly re-render calculations
 };
 
 window.delTemplate = async (id) => {

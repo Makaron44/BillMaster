@@ -7,9 +7,10 @@ export const db = new Dexie('BillMasterDB');
  * cykl: 'monthly', 'quarterly', 'yearly'
  * day: dzień miesiąca płatności (1-31)
  */
-db.version(1).stores({
+db.version(2).stores({
     templates: '++id, name, category, cycle',
-    payments: '++id, templateId, month, status, [templateId+month]'
+    payments: '++id, templateId, month, status, [templateId+month]',
+    settings: 'key'
 });
 
 /**
